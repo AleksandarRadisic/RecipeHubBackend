@@ -16,5 +16,18 @@ namespace RecipeHub.API.Controllers.Base
             _mapper = mapper;
             _config = config;
         }
+
+        protected Guid GetUserIdFromContext()
+        {
+            foreach (var claim in HttpContext.User.Claims)
+            {
+                if (claim.Type == "id")
+                {
+                    return Guid.Parse(claim.Value);
+                }
+            }
+            return Guid.Empty;
+        }
+
     }
 }

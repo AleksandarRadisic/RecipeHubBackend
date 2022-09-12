@@ -64,19 +64,51 @@ namespace RecipeHub.ClassLib.Service.Implementation
             _uow.GetRepository<IRecipeWriteRepository>().Update(recipeFromDatabase);
         }
 
-        public void addPicture(IFormFile file)
+        public void addPicture(IFormFile file, Guid id, Guid userId)
         {
-            PictureUtility.savePicture(RecipePictureDestination, file);
+            Recipe recipe = _uow.GetRepository<IRecipeReadRepository>().GetById(id);
+            if (recipe == null) throw new EntityNotFoundException("Recipe not found");
+            if (recipe.UserId != userId) throw new UnauthorizedAccessException("Recipe not owned");
+            string pictureName = PictureUtility.savePicture(RecipePictureDestination, file);
+            recipe.Pictures = new List<Picture>{new Picture{FileName = pictureName}};
+            _uow.GetRepository<IRecipeWriteRepository>().Update(recipe);
         }
 
-        public void deletePicture()
+        public void deletePicture(Guid recipeId, Guid userId, Guid pictureId)
         {
-            PictureUtility.deletePicture(RecipePictureDestination, "7033e572-461c-498e-9b47-5d37a0e7519b.jpg");
+            Recipe recipe = _uow.GetRepository<IRecipeReadRepository>().GetById(recipeId, FetchType.Eager);
+            if (recipe == null) throw new EntityNotFoundException("Recipe not found");
+            if (recipe.UserId != userId) throw new UnauthorizedAccessException("Recipe not owned");
+            foreach (var pic in recipe.Pictures)
+            {
+                if (pic.Id == pictureId)
+                {
+                    PictureUtility.deletePicture(RecipePictureDestination, pic.FileName);
+                    _uow.GetRepository<IPictureWriteRepository>().Delete(pic);
+                    return;
+                }
+            }
+
+            throw new EntityNotFoundException("Picture not found in recipe");
         }
 
         public string getPictureAsBase64()
         {
             return PictureUtility.convertToBase64(RecipePictureDestination, "21f9d746-8d61-4d79-9cc7-d040c2cd3b4e.jpg");
+        }
+
+        public void addComments(Comment comment, Guid recipeId)
+        {
+            Recipe recipe = _uow.GetRepository<IRecipeReadRepository>().GetById(recipeId, FetchType.Eager);
+            if (recipe == null) throw new EntityNotFoundException("Recipe not found");
+            if (recipe.UserId == comment.UserId) throw new ForbiddenException("Cannot post comment on owned recipe");
+            foreach (var existingComment in recipe.Comments)
+            {
+                if (existingComment.UserId == comment.UserId)
+                    throw new ForbiddenException("Already commented on this recipe");
+            }
+            recipe.Comments.Append(comment);
+            _uow.GetRepository<IRecipeWriteRepository>().Update(recipe);
         }
     }
 }

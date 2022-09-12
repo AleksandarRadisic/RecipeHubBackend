@@ -34,15 +34,7 @@ namespace RecipeHub.API.Controllers
             try
             {
                 Recipe recipe = _mapper.Map<Recipe>(dto);
-                foreach (var claim in HttpContext.User.Claims)
-                {
-                    if (claim.Type == "id")
-                    {
-                        recipe.UserId = Guid.Parse(claim.Value);
-                        break;
-                    }
-                }
-
+                recipe.UserId = GetUserIdFromContext();
                 _recipeService.addRecipe(recipe);
                 return Ok("Recipe added");
             }
@@ -65,15 +57,7 @@ namespace RecipeHub.API.Controllers
             try
             {
                 Recipe recipe = _mapper.Map<Recipe>(dto);
-                foreach (var claim in HttpContext.User.Claims)
-                {
-                    if (claim.Type == "id")
-                    {
-                        recipe.UserId = Guid.Parse(claim.Value);
-                        break;
-                    }
-                }
-
+                recipe.UserId = GetUserIdFromContext();
                 recipe.Id = id;
                 _recipeService.editRecipe(recipe);
                 return Ok("Recipe updated");
@@ -90,23 +74,55 @@ namespace RecipeHub.API.Controllers
             }
         }
 
-        [HttpPost("Image")]
-        public IActionResult addImage(IFormFile file)
+        [HttpPost("{id:guid}/Picture")]
+        [Authorize(Roles = "Regular")]
+        public IActionResult addPicture(IFormFile file, Guid id)
         {
-            _recipeService.addPicture(file);
-            return Ok("Picture added");
+            try
+            {
+                Guid userId = GetUserIdFromContext();
+                _recipeService.addPicture(file, id, userId);
+                return Ok("Picture added");
+            }
+            catch (Exception ex)
+            {
+                switch (ex)
+                {
+                    case UnauthorizedAccessException: return Unauthorized(ex.Message);
+                    case EntityNotFoundException: return NotFound(ex.Message);
+                    default: return Problem("Oops, something went wrong. Try again");
+                }
+            }
+            
         }
 
-        [HttpGet("Image")]
-        public IActionResult getImage()
+        [HttpDelete("{id:guid}/Pictures/{picId:guid}")]
+        public IActionResult deletePicture(Guid id, Guid picId)
         {
-            return Ok(_recipeService.getPictureAsBase64());
+            try
+            {
+                Guid userId = GetUserIdFromContext();
+                _recipeService.deletePicture(id, userId, picId);
+                return Ok("Picture deleted");
+            }
+            catch (Exception ex)
+            {
+                switch (ex)
+                {
+                    case UnauthorizedAccessException: return Unauthorized(ex.Message);
+                    case EntityNotFoundException: return NotFound(ex.Message);
+                    default: return Problem("Oops, something went wrong. Try again");
+                }
+            }
         }
 
-        [HttpDelete("Image")]
-        public IActionResult deleteImage()
+        [HttpPost("{id:guid}/comments")]
+        [Authorize(Roles = "Regular")]
+        public IActionResult PostComment(NewCommentDto dto, Guid id)
         {
-            _recipeService.deletePicture();
+            Comment comment = _mapper.Map<Comment>(dto);
+            Guid userId = GetUserIdFromContext();
+            comment.UserId = userId;
             return Ok();
         }
     }

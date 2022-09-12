@@ -26,6 +26,7 @@ namespace RecipeHub.ClassLib.Database.Repository.Implementation
                     .Include(recipe => recipe.RecipeIngredients)
                     .ThenInclude(recIng => recIng.Ingredient)
                     .Include(rec => rec.Comments)
+                    .Include(r => r.Pictures)
                     .ToList();
             }
             return set.ToList();
@@ -40,7 +41,8 @@ namespace RecipeHub.ClassLib.Database.Repository.Implementation
                     .Include(recipe => recipe.RecipeIngredients)
                     .ThenInclude(recIng => recIng.Ingredient)
                     .Include(rec => rec.Comments)
-                    .FirstOrDefault(c => c.Id == id);
+                    .Include(r => r.Pictures)
+                    .FirstOrDefault(r => r.Id == id);
             }
             return set.Find(id);
         }

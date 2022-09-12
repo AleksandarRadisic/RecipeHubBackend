@@ -14,8 +14,9 @@ namespace RecipeHub.ClassLib.Service
         public Recipe getRecipe(Guid id);
         public void addRecipe(Recipe recipe);
         public void editRecipe(Recipe recipe);
-        public void addPicture(IFormFile file);
-        public void deletePicture();
+        public void addPicture(IFormFile file, Guid id, Guid userId);
+        public void deletePicture(Guid recipeId, Guid userId, Guid pictureId);
         public string getPictureAsBase64();
+        public void addComments(Comment comment, Guid recipeId);
     }
 }
