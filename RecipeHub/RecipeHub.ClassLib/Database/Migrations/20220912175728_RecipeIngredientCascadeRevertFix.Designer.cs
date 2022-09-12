@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RecipeHub.ClassLib.Database.EfStructures;
@@ -11,9 +12,10 @@ using RecipeHub.ClassLib.Database.EfStructures;
 namespace RecipeHub.ClassLib.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220912175728_RecipeIngredientCascadeRevertFix")]
+    partial class RecipeIngredientCascadeRevertFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,31 +100,6 @@ namespace RecipeHub.ClassLib.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Ingredient");
-                });
-
-            modelBuilder.Entity("RecipeHub.ClassLib.Model.Picture", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("ArticleId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("RecipeId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ArticleId");
-
-                    b.HasIndex("RecipeId");
-
-                    b.ToTable("Picture");
                 });
 
             modelBuilder.Entity("RecipeHub.ClassLib.Model.Recipe", b =>
@@ -258,17 +235,6 @@ namespace RecipeHub.ClassLib.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("RecipeHub.ClassLib.Model.Picture", b =>
-                {
-                    b.HasOne("RecipeHub.ClassLib.Model.Article", null)
-                        .WithMany("Pictures")
-                        .HasForeignKey("ArticleId");
-
-                    b.HasOne("RecipeHub.ClassLib.Model.Recipe", null)
-                        .WithMany("Pictures")
-                        .HasForeignKey("RecipeId");
-                });
-
             modelBuilder.Entity("RecipeHub.ClassLib.Model.Recipe", b =>
                 {
                     b.HasOne("RecipeHub.ClassLib.Model.User", "User")
@@ -309,15 +275,11 @@ namespace RecipeHub.ClassLib.Migrations
             modelBuilder.Entity("RecipeHub.ClassLib.Model.Article", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("Pictures");
                 });
 
             modelBuilder.Entity("RecipeHub.ClassLib.Model.Recipe", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("Pictures");
 
                     b.Navigation("RecipeIngredients");
                 });

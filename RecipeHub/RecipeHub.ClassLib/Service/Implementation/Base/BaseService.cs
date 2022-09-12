@@ -12,6 +12,7 @@ namespace RecipeHub.ClassLib.Service.Implementation.Base
     {
         protected readonly IUnitOfWork _uow;
         protected readonly IMapper _mapper;
+        protected const string RecipePictureDestination = "Pictures/Recipes";
 
         public BaseService(IUnitOfWork uow, IMapper mapper)
         {

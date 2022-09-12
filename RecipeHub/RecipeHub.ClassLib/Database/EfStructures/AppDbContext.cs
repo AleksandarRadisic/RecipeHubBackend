@@ -16,6 +16,8 @@ namespace RecipeHub.ClassLib.Database.EfStructures
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Role { get; set; }
         public DbSet<Ingredient> Ingredient { get; set; }
+        public DbSet<RecipeIngredient> RecipeIngredient { get; set; }
+        public DbSet<Picture> Picture { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
 

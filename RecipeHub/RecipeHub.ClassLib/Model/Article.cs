@@ -14,5 +14,6 @@ namespace RecipeHub.ClassLib.Model
         public Guid UserId { get; set; }
         public User User { get; set; }
         public IEnumerable<Comment> Comments { get; set; }
+        public IEnumerable<Picture> Pictures { get; set; }
     }
 }

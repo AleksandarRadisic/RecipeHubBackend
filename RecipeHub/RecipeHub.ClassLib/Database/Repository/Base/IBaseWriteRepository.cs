@@ -11,5 +11,6 @@ namespace RecipeHub.ClassLib.Database.Repository.Base
         TEntity Add(TEntity entity, bool persist = true);
         TEntity Update(TEntity entity, bool persist = true);
         void Delete(TEntity entity, bool persist = true);
+        void DeleteMany(IEnumerable<TEntity> entities, bool persist = true);
     }
 }

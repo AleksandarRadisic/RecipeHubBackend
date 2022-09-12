@@ -73,6 +73,7 @@ namespace RecipeHub.API.Controllers
                         break;
                     }
                 }
+
                 recipe.Id = id;
                 _recipeService.editRecipe(recipe);
                 return Ok("Recipe updated");
@@ -87,7 +88,26 @@ namespace RecipeHub.API.Controllers
                     default: return Problem("Oops, something went wrong. Try again");
                 }
             }
-            
+        }
+
+        [HttpPost("Image")]
+        public IActionResult addImage(IFormFile file)
+        {
+            _recipeService.addPicture(file);
+            return Ok("Picture added");
+        }
+
+        [HttpGet("Image")]
+        public IActionResult getImage()
+        {
+            return Ok(_recipeService.getPictureAsBase64());
+        }
+
+        [HttpDelete("Image")]
+        public IActionResult deleteImage()
+        {
+            _recipeService.deletePicture();
+            return Ok();
         }
     }
 }

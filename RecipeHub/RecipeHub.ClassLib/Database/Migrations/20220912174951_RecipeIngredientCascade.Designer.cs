@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RecipeHub.ClassLib.Database.EfStructures;
@@ -11,9 +12,10 @@ using RecipeHub.ClassLib.Database.EfStructures;
 namespace RecipeHub.ClassLib.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220912174951_RecipeIngredientCascade")]
+    partial class RecipeIngredientCascade
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,31 +102,6 @@ namespace RecipeHub.ClassLib.Migrations
                     b.ToTable("Ingredient");
                 });
 
-            modelBuilder.Entity("RecipeHub.ClassLib.Model.Picture", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("ArticleId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("RecipeId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ArticleId");
-
-                    b.HasIndex("RecipeId");
-
-                    b.ToTable("Picture");
-                });
-
             modelBuilder.Entity("RecipeHub.ClassLib.Model.Recipe", b =>
                 {
                     b.Property<Guid>("Id")
@@ -151,30 +128,6 @@ namespace RecipeHub.ClassLib.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Recipes");
-                });
-
-            modelBuilder.Entity("RecipeHub.ClassLib.Model.RecipeIngredient", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("IngredientId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid?>("RecipeId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IngredientId");
-
-                    b.HasIndex("RecipeId");
-
-                    b.ToTable("RecipeIngredient");
                 });
 
             modelBuilder.Entity("RecipeHub.ClassLib.Model.Role", b =>
@@ -258,17 +211,6 @@ namespace RecipeHub.ClassLib.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("RecipeHub.ClassLib.Model.Picture", b =>
-                {
-                    b.HasOne("RecipeHub.ClassLib.Model.Article", null)
-                        .WithMany("Pictures")
-                        .HasForeignKey("ArticleId");
-
-                    b.HasOne("RecipeHub.ClassLib.Model.Recipe", null)
-                        .WithMany("Pictures")
-                        .HasForeignKey("RecipeId");
-                });
-
             modelBuilder.Entity("RecipeHub.ClassLib.Model.Recipe", b =>
                 {
                     b.HasOne("RecipeHub.ClassLib.Model.User", "User")
@@ -277,22 +219,42 @@ namespace RecipeHub.ClassLib.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.OwnsMany("RecipeHub.ClassLib.Model.RecipeIngredient", "RecipeIngredients", b1 =>
+                        {
+                            b1.Property<Guid>("RecipeId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<Guid>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("uuid");
+
+                            b1.Property<Guid>("IngredientId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("Quantity")
+                                .HasColumnType("integer");
+
+                            b1.HasKey("RecipeId", "Id");
+
+                            b1.HasIndex("IngredientId");
+
+                            b1.ToTable("RecipeIngredient");
+
+                            b1.HasOne("RecipeHub.ClassLib.Model.Ingredient", "Ingredient")
+                                .WithMany()
+                                .HasForeignKey("IngredientId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
+
+                            b1.WithOwner()
+                                .HasForeignKey("RecipeId");
+
+                            b1.Navigation("Ingredient");
+                        });
+
+                    b.Navigation("RecipeIngredients");
+
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("RecipeHub.ClassLib.Model.RecipeIngredient", b =>
-                {
-                    b.HasOne("RecipeHub.ClassLib.Model.Ingredient", "Ingredient")
-                        .WithMany()
-                        .HasForeignKey("IngredientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RecipeHub.ClassLib.Model.Recipe", null)
-                        .WithMany("RecipeIngredients")
-                        .HasForeignKey("RecipeId");
-
-                    b.Navigation("Ingredient");
                 });
 
             modelBuilder.Entity("RecipeHub.ClassLib.Model.User", b =>
@@ -309,17 +271,11 @@ namespace RecipeHub.ClassLib.Migrations
             modelBuilder.Entity("RecipeHub.ClassLib.Model.Article", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("Pictures");
                 });
 
             modelBuilder.Entity("RecipeHub.ClassLib.Model.Recipe", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("Pictures");
-
-                    b.Navigation("RecipeIngredients");
                 });
 #pragma warning restore 612, 618
         }

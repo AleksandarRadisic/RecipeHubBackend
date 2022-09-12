@@ -43,5 +43,12 @@ namespace RecipeHub.ClassLib.Database.Repository.Base
             if (persist)
                 _context.SaveChanges();
         }
+
+        public void DeleteMany(IEnumerable<TEntity> entities, bool persist = true)
+        {
+            _context.Set<TEntity>().RemoveRange(entities);
+            if (persist)
+                _context.SaveChanges();
+        }
     }
 }
