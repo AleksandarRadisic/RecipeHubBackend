@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using RecipeHub.ClassLib.Database.EfStructures;
 using RecipeHub.ClassLib.Database.Repository.Base;
 using RecipeHub.ClassLib.Database.Repository.Enums;
@@ -21,7 +22,11 @@ namespace RecipeHub.ClassLib.Database.Repository.Implementation
             var set = GetSet();
             if (fetchType == FetchType.Eager)
             {
-                return set.ToList();
+                return set
+                    .Include(recipe => recipe.RecipeIngredients)
+                    .ThenInclude(recIng => recIng.Ingredient)
+                    .Include(rec => rec.Comments)
+                    .ToList();
             }
             return set.ToList();
         }
@@ -31,7 +36,11 @@ namespace RecipeHub.ClassLib.Database.Repository.Implementation
             var set = GetSet();
             if (fetchType == FetchType.Eager)
             {
-                return set.FirstOrDefault(c => c.Id == id);
+                return set
+                    .Include(recipe => recipe.RecipeIngredients)
+                    .ThenInclude(recIng => recIng.Ingredient)
+                    .Include(rec => rec.Comments)
+                    .FirstOrDefault(c => c.Id == id);
             }
             return set.Find(id);
         }

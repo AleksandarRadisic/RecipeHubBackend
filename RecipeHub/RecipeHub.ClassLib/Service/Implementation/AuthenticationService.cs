@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using RecipeHub.ClassLib.Database.Infrastructure;
 using RecipeHub.ClassLib.Database.Repository;
 using RecipeHub.ClassLib.Exceptions;
@@ -15,7 +16,7 @@ namespace RecipeHub.ClassLib.Service.Implementation
     public class AuthenticationService : BaseService, IAuthenticationService
     {
         private readonly IJwtGenerator _jwtGenerator;
-        public AuthenticationService(IUnitOfWork uow, IJwtGenerator jwtGenerator) : base(uow)
+        public AuthenticationService(IUnitOfWork uow, IJwtGenerator jwtGenerator, IMapper mapper) : base(uow, mapper)
         {
             _jwtGenerator = jwtGenerator;
         }

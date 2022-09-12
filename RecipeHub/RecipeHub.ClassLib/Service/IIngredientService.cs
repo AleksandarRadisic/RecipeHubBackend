@@ -7,10 +7,8 @@ using RecipeHub.ClassLib.Model;
 
 namespace RecipeHub.ClassLib.Service
 {
-    public interface IRecipeService
+    public interface IIngredientService
     {
-        public Recipe getRecipe(Guid id);
-        public void addRecipe(Recipe recipe);
-        public void editRecipe(Recipe recipe);
+        public void SaveIngredient(Ingredient ingredient);
     }
 }

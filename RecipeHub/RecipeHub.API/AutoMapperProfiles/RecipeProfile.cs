@@ -9,6 +9,9 @@ namespace RecipeHub.API.AutoMapperProfiles
         public RecipeProfile()
         {
             CreateMap<NewRecipeDto, Recipe>();
+            CreateMap<RecipeIngredientDto, RecipeIngredient>();
+            CreateMap<Recipe, Recipe>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }
     }
 }
