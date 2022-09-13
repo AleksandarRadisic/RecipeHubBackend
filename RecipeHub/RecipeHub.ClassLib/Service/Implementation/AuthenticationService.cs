@@ -25,6 +25,7 @@ namespace RecipeHub.ClassLib.Service.Implementation
         {
             var user = _uow.GetRepository<IUserReadRepository>().GetByUsernameAndPassword(username, PasswordEncoder.EncodePassword(password));
             if (user == null) throw new LogInException("User with given username and password not found!");
+            if (user.Banned) throw new BannedException("You have been banned");
 
             return new [] { _jwtGenerator.GenerateToken(user), user.Role.Name, user.Id.ToString() };
         }

@@ -1,4 +1,4 @@
-﻿using RecipeHub.API.Dto;
+﻿using RecipeHub.API.Dto.PostPut;
 using RecipeHub.ClassLib.Model;
 
 namespace RecipeHub.API.AutoMapperProfiles

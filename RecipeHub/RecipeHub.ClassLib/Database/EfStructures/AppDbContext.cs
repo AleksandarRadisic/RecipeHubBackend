@@ -25,7 +25,31 @@ namespace RecipeHub.ClassLib.Database.EfStructures
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
+            modelBuilder
+                .Entity<Recipe>()
+                .HasMany(r => r.RecipeIngredients)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder
+                .Entity<Recipe>()
+                .HasMany(r => r.Pictures)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder
+                .Entity<Recipe>()
+                .HasMany(r => r.Comments)
+                .WithOne(c => c.Recipe)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+            modelBuilder
+                .Entity<Article>()
+                .HasMany(r => r.Pictures)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder
+                .Entity<Article>()
+                .HasMany(a => a.Comments)
+                .WithOne(c => c.Article)
+                .OnDelete(DeleteBehavior.ClientSetNull);
         }
     }
 }

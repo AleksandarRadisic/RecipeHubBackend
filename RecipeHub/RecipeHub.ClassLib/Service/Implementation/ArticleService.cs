@@ -17,26 +17,28 @@ namespace RecipeHub.ClassLib.Service.Implementation
 {
     public class ArticleService : BaseService, IArticleService
     {
+        protected const string ArticlePictureDestination = "Pictures/Articles";
+
         public ArticleService(IUnitOfWork uow, IMapper mapper) : base(uow, mapper)
         {
         }
 
-        public IEnumerable<Article> getArticles()
+        public IEnumerable<Article> GetArticles()
         {
             return _uow.GetRepository<IArticleReadRepository>().GetAll();
         }
 
-        public Article getArticle(Guid id)
+        public Article GetArticle(Guid id)
         {
             return _uow.GetRepository<IArticleReadRepository>().GetById(id, FetchType.Eager);
         }
 
-        public void addArticle(Article article)
+        public void AddArticle(Article article)
         {
             _uow.GetRepository<IArticleWriteRepository>().Add(article);
         }
 
-        public void editArticle(Article article)
+        public void EditArticle(Article article)
         {
             Article articleFromDatabase = _uow.GetRepository<IArticleReadRepository>().GetById(article.Id);
             if (articleFromDatabase == null) throw new EntityNotFoundException("Article not found");
@@ -46,17 +48,17 @@ namespace RecipeHub.ClassLib.Service.Implementation
             _uow.GetRepository<IArticleWriteRepository>().Update(articleFromDatabase);
         }
 
-        public void addPicture(IFormFile file, Guid id, Guid userId)
+        public void AddPicture(IFormFile file, Guid id, Guid userId)
         {
             Article article = _uow.GetRepository<IArticleReadRepository>().GetById(id);
             if (article == null) throw new EntityNotFoundException("Article not found");
             if (article.UserId != userId) throw new UnauthorizedAccessException("Article not owned");
-            string pictureName = PictureUtility.savePicture(RecipePictureDestination, file);
+            string pictureName = PictureUtility.savePicture(ArticlePictureDestination, file);
             article.Pictures = new List<Picture> { new Picture { FileName = pictureName } };
             _uow.GetRepository<IArticleWriteRepository>().Update(article);
         }
 
-        public void deletePicture(Guid articleId, Guid userId, Guid pictureId)
+        public void DeletePicture(Guid articleId, Guid userId, Guid pictureId)
         {
             Article article = _uow.GetRepository<IArticleReadRepository>().GetById(articleId, FetchType.Eager);
             if (article == null) throw new EntityNotFoundException("Article not found");
@@ -65,7 +67,7 @@ namespace RecipeHub.ClassLib.Service.Implementation
             {
                 if (pic.Id == pictureId)
                 {
-                    PictureUtility.deletePicture(RecipePictureDestination, pic.FileName);
+                    PictureUtility.deletePicture(ArticlePictureDestination, pic.FileName);
                     _uow.GetRepository<IPictureWriteRepository>().Delete(pic);
                     return;
                 }
@@ -74,12 +76,12 @@ namespace RecipeHub.ClassLib.Service.Implementation
             throw new EntityNotFoundException("Picture not found in recipe");
         }
 
-        public string getPictureAsBase64()
+        public string GetPictureAsBase64()
         {
             throw new NotImplementedException();
         }
 
-        public void addComments(Comment comment, Guid articleId)
+        public void AddComments(Comment comment, Guid articleId)
         {
             Article article = _uow.GetRepository<IArticleReadRepository>().GetById(articleId, FetchType.Eager);
             if (article == null) throw new EntityNotFoundException("Article not found");
@@ -92,6 +94,39 @@ namespace RecipeHub.ClassLib.Service.Implementation
 
             article.Comments = new List<Comment>(article.Comments.Append(comment));
             _uow.GetRepository<IArticleWriteRepository>().Update(article);
+        }
+
+        public void ReportComment(Guid articleId, Guid userId, Guid commentId)
+        {
+            Article article = _uow.GetRepository<IArticleReadRepository>().GetById(articleId, FetchType.Eager);
+            if (article == null) throw new EntityNotFoundException("Article not found");
+            if (article.UserId != userId) throw new ForbiddenException("Cannot report comments on unowned article");
+            foreach (var existingComment in article.Comments)
+            {
+                if (existingComment.Id == commentId)
+                {
+                    if (existingComment.Report != null) throw new ForbiddenException("Comment already reported");
+                    existingComment.Report = new Report();
+                    _uow.GetRepository<ICommentWriteRepository>().Update(existingComment);
+                    return;
+                }
+
+            }
+            throw new EntityNotFoundException("Comment not found");
+        }
+
+        public void DeleteArticle(Guid articleId, Guid userId)
+        {
+            Article article = _uow.GetRepository<IArticleReadRepository>().GetById(articleId, false, FetchType.Eager);
+            if (article == null) throw new EntityNotFoundException("Article not found");
+            if (article.UserId != userId)
+                if (_uow.GetRepository<IUserReadRepository>().GetById(userId, FetchType.Eager).Role.Name != "Admin")
+                    throw new ForbiddenException("Only admin and article owners may delete article");
+            foreach (var picture in article.Pictures)
+            {
+                PictureUtility.deletePicture(ArticlePictureDestination, picture.FileName);
+            }
+            _uow.GetRepository<IArticleWriteRepository>().Delete(article);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using RecipeHub.ClassLib.Model.Enumerations;
 
-namespace RecipeHub.API.Dto
+namespace RecipeHub.API.Dto.PostPut
 {
     public class NewIngredientDto
     {

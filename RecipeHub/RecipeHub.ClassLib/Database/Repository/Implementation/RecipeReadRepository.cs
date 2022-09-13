@@ -25,8 +25,38 @@ namespace RecipeHub.ClassLib.Database.Repository.Implementation
                 return set
                     .Include(recipe => recipe.RecipeIngredients)
                     .ThenInclude(recIng => recIng.Ingredient)
-                    .Include(rec => rec.Comments)
+                    .Include(rec => rec.Comments.Where(c => c.Report == null || !c.Report.BlockApproved))
                     .Include(r => r.Pictures)
+                    .ToList();
+            }
+            return set.ToList();
+        }
+
+        public Recipe GetById(Guid id, bool ignoreBlockedComments = true, FetchType fetchType = FetchType.Lazy)
+        {
+            if (fetchType == FetchType.Eager && !ignoreBlockedComments)
+            {
+                return GetSet()
+                    .Include(r => r.Comments)
+                    .Include(r => r.User)
+                    .Include(r => r.Pictures)
+                    .FirstOrDefault(r => r.Id == id);
+            }
+
+            return GetById(id, fetchType);
+        }
+
+        public IEnumerable<Recipe> GetByUserId(Guid userId, FetchType fetchType = FetchType.Lazy)
+        {
+            var set = GetSet();
+            if (fetchType == FetchType.Eager)
+            {
+                return set
+                    .Include(recipe => recipe.RecipeIngredients)
+                    .ThenInclude(recIng => recIng.Ingredient)
+                    .Include(rec => rec.Comments.Where(c => c.Report == null || !c.Report.BlockApproved))
+                    .Include(r => r.Pictures)
+                    .Where(r => r.UserId == userId)
                     .ToList();
             }
             return set.ToList();
@@ -40,7 +70,7 @@ namespace RecipeHub.ClassLib.Database.Repository.Implementation
                 return set
                     .Include(recipe => recipe.RecipeIngredients)
                     .ThenInclude(recIng => recIng.Ingredient)
-                    .Include(rec => rec.Comments)
+                    .Include(rec => rec.Comments.Where(c => c.Report == null || !c.Report.BlockApproved))
                     .Include(r => r.Pictures)
                     .FirstOrDefault(r => r.Id == id);
             }

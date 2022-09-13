@@ -13,5 +13,6 @@ namespace RecipeHub.ClassLib.Database.Repository
         public User GetByUsernameAndPassword(string username, string password);
         public User GetByUsername(string username);
         public User GetByEmail(string email);
+        public IEnumerable<User> GetSuspiciousUsers(int numberOfBlockedComments = 3);
     }
 }

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipeHub.API.Controllers.Base;
-using RecipeHub.API.Dto;
+using RecipeHub.API.Dto.PostPut;
 using RecipeHub.ClassLib.Database.Infrastructure;
 using RecipeHub.ClassLib.Database.Repository;
 using RecipeHub.ClassLib.Exceptions;

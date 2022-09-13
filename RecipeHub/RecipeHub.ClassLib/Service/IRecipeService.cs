@@ -18,5 +18,7 @@ namespace RecipeHub.ClassLib.Service
         public void deletePicture(Guid recipeId, Guid userId, Guid pictureId);
         public string getPictureAsBase64();
         public void addComments(Comment comment, Guid recipeId);
+        public void reportComment(Guid recipeId, Guid userId, Guid commentId);
+        public void deleteRecipe(Guid recipeId, Guid userId);
     }
 }

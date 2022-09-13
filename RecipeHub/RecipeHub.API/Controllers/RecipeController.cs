@@ -3,7 +3,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipeHub.API.Controllers.Base;
-using RecipeHub.API.Dto;
+using RecipeHub.API.Dto.PostPut;
 using RecipeHub.ClassLib.Database.Infrastructure;
 using RecipeHub.ClassLib.Exceptions;
 using RecipeHub.ClassLib.Model;
@@ -24,13 +24,13 @@ namespace RecipeHub.API.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            return Ok(_recipeService.getRecipes());
+            return Ok(_recipeService.GetRecipes());
         }
 
         [HttpGet("{id:guid}")]
         public IActionResult GetById(Guid id)
         {
-            return Ok(_recipeService.getRecipe(id));
+            return Ok(_recipeService.GetRecipe(id));
         }
 
         [HttpPost]
@@ -41,7 +41,7 @@ namespace RecipeHub.API.Controllers
             {
                 Recipe recipe = _mapper.Map<Recipe>(dto);
                 recipe.UserId = GetUserIdFromContext();
-                _recipeService.addRecipe(recipe);
+                _recipeService.AddRecipe(recipe);
                 return Ok("Recipe added");
             }
             catch (Exception ex)
@@ -60,7 +60,7 @@ namespace RecipeHub.API.Controllers
                 Recipe recipe = _mapper.Map<Recipe>(dto);
                 recipe.UserId = GetUserIdFromContext();
                 recipe.Id = id;
-                _recipeService.editRecipe(recipe);
+                _recipeService.EditRecipe(recipe);
                 return Ok("Recipe updated");
             }
             catch (Exception ex)
@@ -76,7 +76,7 @@ namespace RecipeHub.API.Controllers
             try
             {
                 Guid userId = GetUserIdFromContext();
-                _recipeService.addPicture(file, id, userId);
+                _recipeService.AddPicture(file, id, userId);
                 return Ok("Picture added");
             }
             catch (Exception ex)
@@ -92,7 +92,7 @@ namespace RecipeHub.API.Controllers
             try
             {
                 Guid userId = GetUserIdFromContext();
-                _recipeService.deletePicture(id, userId, picId);
+                _recipeService.DeletePicture(id, userId, picId);
                 return Ok("Picture deleted");
             }
             catch (Exception ex)
@@ -110,7 +110,7 @@ namespace RecipeHub.API.Controllers
                 Comment comment = _mapper.Map<Comment>(dto);
                 Guid userId = GetUserIdFromContext();
                 comment.UserId = userId;
-                _recipeService.addComments(comment, id);
+                _recipeService.AddComments(comment, id);
                 return Ok("Comment added");
             }
             catch (Exception ex)
@@ -118,6 +118,36 @@ namespace RecipeHub.API.Controllers
                 return ReturnErrorResult(ex);
             }
             
+        }
+
+        [HttpPost("{id:guid}/comments{comId:guid}/report")]
+        [Authorize(Roles = "Regular")]
+        public IActionResult ReportComments(Guid id, Guid comId)
+        {
+            try
+            {
+                _recipeService.ReportComment(id, GetUserIdFromContext(), comId);
+                return Ok("Comment has been reported");
+            }
+            catch (Exception ex)
+            {
+                return ReturnErrorResult(ex);
+            }
+        }
+
+        [HttpDelete("{id:guid}")]
+        [Authorize(Roles = "Regular,Admin")]
+        public IActionResult DeleteRecipe(Guid id)
+        {
+            try
+            {
+                _recipeService.DeleteRecipe(id, GetUserIdFromContext());
+                return Ok("Recipe deleted");
+            }
+            catch (Exception ex)
+            {
+                return ReturnErrorResult(ex);
+            }
         }
     }
 }

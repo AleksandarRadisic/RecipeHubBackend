@@ -16,5 +16,7 @@ namespace RecipeHub.ClassLib.Model
         public Guid RoleId { get; set; }
         public Role Role { get; set; }
         public string Password { get; set; }
+        public bool Banned { get; set; }
+        public IEnumerable<Comment> Comments { get; set; }
     }
 }

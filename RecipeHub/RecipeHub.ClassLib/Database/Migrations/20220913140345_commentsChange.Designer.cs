@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RecipeHub.ClassLib.Database.EfStructures;
@@ -11,9 +12,10 @@ using RecipeHub.ClassLib.Database.EfStructures;
 namespace RecipeHub.ClassLib.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220913140345_commentsChange")]
+    partial class commentsChange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -198,9 +200,6 @@ namespace RecipeHub.ClassLib.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<bool>("Banned")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
@@ -253,7 +252,7 @@ namespace RecipeHub.ClassLib.Migrations
                         .HasForeignKey("RecipeId");
 
                     b.HasOne("RecipeHub.ClassLib.Model.User", "User")
-                        .WithMany("Comments")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -290,13 +289,11 @@ namespace RecipeHub.ClassLib.Migrations
                 {
                     b.HasOne("RecipeHub.ClassLib.Model.Article", null)
                         .WithMany("Pictures")
-                        .HasForeignKey("ArticleId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ArticleId");
 
                     b.HasOne("RecipeHub.ClassLib.Model.Recipe", null)
                         .WithMany("Pictures")
-                        .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("RecipeId");
                 });
 
             modelBuilder.Entity("RecipeHub.ClassLib.Model.Recipe", b =>
@@ -320,8 +317,7 @@ namespace RecipeHub.ClassLib.Migrations
 
                     b.HasOne("RecipeHub.ClassLib.Model.Recipe", null)
                         .WithMany("RecipeIngredients")
-                        .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("RecipeId");
 
                     b.Navigation("Ingredient");
                 });
@@ -351,11 +347,6 @@ namespace RecipeHub.ClassLib.Migrations
                     b.Navigation("Pictures");
 
                     b.Navigation("RecipeIngredients");
-                });
-
-            modelBuilder.Entity("RecipeHub.ClassLib.Model.User", b =>
-                {
-                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

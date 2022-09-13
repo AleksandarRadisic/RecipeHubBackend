@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace RecipeHub.API.Dto
+namespace RecipeHub.API.Dto.PostPut
 {
     public class NewCommentDto
     {

@@ -79,6 +79,8 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
     containerBuilder.RegisterType<AuthenticationService>().As<IAuthenticationService>().InstancePerLifetimeScope();
     containerBuilder.RegisterType<IngredientService>().As<IIngredientService>().InstancePerLifetimeScope();
     containerBuilder.RegisterType<ArticleService>().As<IArticleService>().InstancePerLifetimeScope();
+    containerBuilder.RegisterType<CommentService>().As<ICommentService>().InstancePerLifetimeScope();
+    containerBuilder.RegisterType<AdminService>().As<IAdminService>().InstancePerLifetimeScope();
     //containerBuilder.Populate(builder.Services);
 });
 

@@ -21,14 +21,23 @@ namespace RecipeHub.API.Controllers.Base
 
         protected Guid GetUserIdFromContext()
         {
-            foreach (var claim in HttpContext.User.Claims)
+            try
             {
-                if (claim.Type == "id")
+                foreach (var claim in HttpContext.User.Claims)
                 {
-                    return Guid.Parse(claim.Value);
+                    if (claim.Type == "id")
+                    {
+                        return Guid.Parse(claim.Value);
+                    }
                 }
+
+                return Guid.Empty;
             }
-            return Guid.Empty;
+            catch (Exception)
+            {
+                return Guid.Empty;
+            }
+            
         }
 
         protected IActionResult ReturnErrorResult(Exception ex)
@@ -42,6 +51,7 @@ namespace RecipeHub.API.Controllers.Base
                 case EntityNotFoundException: return NotFound(ex.Message);
                 case LogInException: return NotFound(ex.Message);
                 case ForbiddenException: return StatusCode((int)HttpStatusCode.Forbidden, ex.Message);
+                case BannedException: return StatusCode((int)HttpStatusCode.Forbidden, ex.Message);
                 default: return Problem("Oops, something went wrong. Try again");
             }
         }
