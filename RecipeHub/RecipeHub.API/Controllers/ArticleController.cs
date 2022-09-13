@@ -1,67 +1,65 @@
-﻿using System.Reflection.Metadata;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipeHub.API.Controllers.Base;
 using RecipeHub.API.Dto;
 using RecipeHub.ClassLib.Database.Infrastructure;
-using RecipeHub.ClassLib.Exceptions;
 using RecipeHub.ClassLib.Model;
 using RecipeHub.ClassLib.Service;
 
 namespace RecipeHub.API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class RecipeController : BaseController
+    [Route("api/[controller]")]
+    public class ArticleController : BaseController
     {
-        private readonly IRecipeService _recipeService;
-        public RecipeController(IUnitOfWork uow, IMapper mapper, IConfiguration config, IRecipeService recipeService) : base(uow, mapper, config)
+        private readonly IArticleService _articleService;
+        public ArticleController(IUnitOfWork uow, IMapper mapper, IConfiguration config, IArticleService articleService) : base(uow, mapper, config)
         {
-            _recipeService = recipeService;
+            _articleService = articleService;
         }
 
         [HttpGet]
         public IActionResult GetAll()
         {
-            return Ok(_recipeService.getRecipes());
+            return Ok(_articleService.getArticles());
         }
 
         [HttpGet("{id:guid}")]
-        public IActionResult GetById(Guid id)
+        public IActionResult getById(Guid id)
         {
-            return Ok(_recipeService.getRecipe(id));
+            return Ok(_articleService.getArticle(id));
         }
 
         [HttpPost]
         [Authorize(Roles = "Regular")]
-        public IActionResult PostRecipe(NewRecipeDto dto)
+        public IActionResult PostAction(NewArticleDto dto)
         {
             try
             {
-                Recipe recipe = _mapper.Map<Recipe>(dto);
-                recipe.UserId = GetUserIdFromContext();
-                _recipeService.addRecipe(recipe);
-                return Ok("Recipe added");
+                Article article = _mapper.Map<Article>(dto);
+                article.UserId = GetUserIdFromContext();
+                _articleService.addArticle(article);
+                return Ok("Article added");
             }
             catch (Exception ex)
             {
                 return ReturnErrorResult(ex);
             }
-            
+
         }
 
         [HttpPut("{id:guid}")]
         [Authorize(Roles = "Regular")]
-        public IActionResult PutRecipe(NewRecipeDto dto, Guid id)
+        public IActionResult PutArticle(NewArticleDto dto, Guid id)
         {
             try
             {
-                Recipe recipe = _mapper.Map<Recipe>(dto);
-                recipe.UserId = GetUserIdFromContext();
-                recipe.Id = id;
-                _recipeService.editRecipe(recipe);
-                return Ok("Recipe updated");
+                Article article = _mapper.Map<Article>(dto);
+                article.UserId = GetUserIdFromContext();
+                article.Id = id;
+                _articleService.editArticle(article);
+                return Ok("Article updated");
             }
             catch (Exception ex)
             {
@@ -76,14 +74,13 @@ namespace RecipeHub.API.Controllers
             try
             {
                 Guid userId = GetUserIdFromContext();
-                _recipeService.addPicture(file, id, userId);
+                _articleService.addPicture(file, id, userId);
                 return Ok("Picture added");
             }
             catch (Exception ex)
             {
                 return ReturnErrorResult(ex);
             }
-            
         }
 
         [HttpDelete("{id:guid}/Pictures/{picId:guid}")]
@@ -92,7 +89,7 @@ namespace RecipeHub.API.Controllers
             try
             {
                 Guid userId = GetUserIdFromContext();
-                _recipeService.deletePicture(id, userId, picId);
+                _articleService.deletePicture(id, userId, picId);
                 return Ok("Picture deleted");
             }
             catch (Exception ex)
@@ -110,14 +107,14 @@ namespace RecipeHub.API.Controllers
                 Comment comment = _mapper.Map<Comment>(dto);
                 Guid userId = GetUserIdFromContext();
                 comment.UserId = userId;
-                _recipeService.addComments(comment, id);
+                _articleService.addComments(comment, id);
                 return Ok("Comment added");
             }
             catch (Exception ex)
             {
                 return ReturnErrorResult(ex);
             }
-            
+
         }
     }
 }

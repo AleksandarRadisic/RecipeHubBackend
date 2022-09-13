@@ -32,11 +32,7 @@ namespace RecipeHub.API.Controllers
             }
             catch (Exception ex)
             {
-                switch (ex)
-                {
-                    case AlreadyExistsException: return BadRequest(ex.Message);
-                    default: return Problem("Oops, something went wrong. Try again");
-                }
+                return ReturnErrorResult(ex);
             }
         }
 

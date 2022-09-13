@@ -33,11 +33,7 @@ namespace RecipeHub.API.Controllers
             }
             catch (Exception ex)
             {
-                switch (ex)
-                {
-                    case RegistrationException: return BadRequest(ex.Message);
-                    default: return Problem("Oops, something went wrong. Try again");
-                }
+                return ReturnErrorResult(ex);
             }
         }
 
@@ -54,11 +50,7 @@ namespace RecipeHub.API.Controllers
             }
             catch (Exception ex)
             {
-                switch (ex)
-                {
-                    case LogInException: return NotFound(ex.Message);
-                    default: return Problem("Oops, something went wrong. Try again");
-                }
+                return ReturnErrorResult(ex);
             }
         }
 

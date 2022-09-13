@@ -1,6 +1,8 @@
-﻿using AutoMapper;
+﻿using System.Net;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using RecipeHub.ClassLib.Database.Infrastructure;
+using RecipeHub.ClassLib.Exceptions;
 
 namespace RecipeHub.API.Controllers.Base
 {
@@ -27,6 +29,21 @@ namespace RecipeHub.API.Controllers.Base
                 }
             }
             return Guid.Empty;
+        }
+
+        protected IActionResult ReturnErrorResult(Exception ex)
+        {
+            switch (ex)
+            {
+                case ArgumentException: return BadRequest(ex.Message);
+                case RegistrationException: return BadRequest(ex.Message);
+                case AlreadyExistsException: return BadRequest(ex.Message);
+                case UnauthorizedAccessException: return Unauthorized(ex.Message);
+                case EntityNotFoundException: return NotFound(ex.Message);
+                case LogInException: return NotFound(ex.Message);
+                case ForbiddenException: return StatusCode((int)HttpStatusCode.Forbidden, ex.Message);
+                default: return Problem("Oops, something went wrong. Try again");
+            }
         }
 
     }

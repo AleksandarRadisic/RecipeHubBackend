@@ -78,6 +78,7 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
     containerBuilder.RegisterType<JwtGenerator>().As<IJwtGenerator>().InstancePerLifetimeScope();
     containerBuilder.RegisterType<AuthenticationService>().As<IAuthenticationService>().InstancePerLifetimeScope();
     containerBuilder.RegisterType<IngredientService>().As<IIngredientService>().InstancePerLifetimeScope();
+    containerBuilder.RegisterType<ArticleService>().As<IArticleService>().InstancePerLifetimeScope();
     //containerBuilder.Populate(builder.Services);
 });
 

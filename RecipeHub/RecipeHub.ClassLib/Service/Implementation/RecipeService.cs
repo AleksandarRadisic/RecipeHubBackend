@@ -107,7 +107,8 @@ namespace RecipeHub.ClassLib.Service.Implementation
                 if (existingComment.UserId == comment.UserId)
                     throw new ForbiddenException("Already commented on this recipe");
             }
-            recipe.Comments.Append(comment);
+
+            recipe.Comments = new List<Comment>(recipe.Comments.Append(comment));
             _uow.GetRepository<IRecipeWriteRepository>().Update(recipe);
         }
     }
