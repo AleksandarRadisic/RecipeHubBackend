@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace RecipeHub.ClassLib.Model
 {
@@ -15,6 +16,7 @@ namespace RecipeHub.ClassLib.Model
         public string Email { get; set; }
         public Guid RoleId { get; set; }
         public Role Role { get; set; }
+        [JsonIgnore]
         public string Password { get; set; }
         public bool Banned { get; set; }
         public IEnumerable<Comment> Comments { get; set; }

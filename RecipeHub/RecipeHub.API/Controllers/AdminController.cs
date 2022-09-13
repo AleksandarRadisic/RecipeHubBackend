@@ -56,5 +56,19 @@ namespace RecipeHub.API.Controllers
                 return ReturnErrorResult(ex);
             }
         }
+
+        [HttpPut("users/{id:guid}/ban")]
+        public IActionResult BanUser(Guid id)
+        {
+            try
+            {
+                _adminService.BanUser(id);
+                return Ok("User banned");
+            }
+            catch (Exception ex)
+            {
+                return ReturnErrorResult(ex);
+            }
+        }
     }
 }

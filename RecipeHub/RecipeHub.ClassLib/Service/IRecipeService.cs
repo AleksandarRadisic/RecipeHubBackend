@@ -10,15 +10,16 @@ namespace RecipeHub.ClassLib.Service
 {
     public interface IRecipeService
     {
-        public IEnumerable<Recipe> getRecipes();
-        public Recipe getRecipe(Guid id);
-        public void addRecipe(Recipe recipe);
-        public void editRecipe(Recipe recipe);
-        public void addPicture(IFormFile file, Guid id, Guid userId);
-        public void deletePicture(Guid recipeId, Guid userId, Guid pictureId);
-        public string getPictureAsBase64();
-        public void addComments(Comment comment, Guid recipeId);
-        public void reportComment(Guid recipeId, Guid userId, Guid commentId);
-        public void deleteRecipe(Guid recipeId, Guid userId);
+        public IEnumerable<Recipe> GetRecipes();
+        public Recipe GetRecipe(Guid id);
+        public void AddRecipe(Recipe recipe);
+        public void EditRecipe(Recipe recipe);
+        public void AddPicture(IFormFile file, Guid id, Guid userId);
+        public void DeletePicture(Guid recipeId, Guid userId, Guid pictureId);
+        public IEnumerable<PictureBase64> GetPicturesAsBase64(Recipe recipe);
+        public void AddComments(Comment comment, Guid recipeId);
+        public void ReportComment(Guid recipeId, Guid userId, Guid commentId);
+        public void DeleteRecipe(Guid recipeId, Guid userId);
+        public IEnumerable<Recipe> GetRecipesByUserId(Guid recipeId);
     }
 }

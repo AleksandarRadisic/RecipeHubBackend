@@ -31,6 +31,20 @@ namespace RecipeHub.ClassLib.Service.Implementation
             report.AdminConfirmed = true;
             comment.Report = report;
             _uow.GetRepository<ICommentWriteRepository>().Update(comment);
+            if (comment.RecipeId != null)
+            {
+                var recipe = _uow.GetRepository<IRecipeReadRepository>().GetById(comment.RecipeId.Value, false, FetchType.Eager);
+                recipe.CalculateRating();
+                _uow.GetRepository<IRecipeWriteRepository>().Update(recipe);
+            }
+
+            if (comment.ArticleId != null)
+            {
+                var article = _uow.GetRepository<IArticleReadRepository>().GetById(comment.ArticleId.Value, false, FetchType.Eager);
+                article.CalculateRating();
+                _uow.GetRepository<IArticleWriteRepository>().Update(article);
+
+            }
         }
     }
 }

@@ -20,6 +20,6 @@ namespace RecipeHub.ClassLib.Service
         public void AddComments(Comment comment, Guid articleId);
         public void ReportComment(Guid articleId, Guid userId, Guid commentId);
         public void DeleteArticle(Guid articleId, Guid userId);
-        public IEnumerable<Article>GetByUserId(Guid userId);
+        public IEnumerable<Article>GetArticlesByUserId(Guid userId);
     }
 }

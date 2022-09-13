@@ -38,6 +38,35 @@ namespace RecipeHub.API.Controllers
             }
         }
 
+        [HttpGet("from-user/{id:guid}")]
+        public IActionResult GetFromUser(Guid id)
+        {
+            try
+            {
+                var recipes = _articleService.GetArticlesByUserId(id);
+                return Ok(recipes);
+            }
+            catch (Exception ex)
+            {
+                return ReturnErrorResult(ex);
+            }
+        }
+
+        [HttpGet("logged-user")]
+        [Authorize]
+        public IActionResult GetFromLoggedInUser()
+        {
+            try
+            {
+                var recipes = _articleService.GetArticlesByUserId(GetUserIdFromContext());
+                return Ok(recipes);
+            }
+            catch (Exception ex)
+            {
+                return ReturnErrorResult(ex);
+            }
+        }
+
         [HttpPost]
         [Authorize(Roles = "Regular")]
         public IActionResult PostAction(NewArticleDto dto)

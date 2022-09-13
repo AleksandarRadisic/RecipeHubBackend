@@ -10,5 +10,6 @@ namespace RecipeHub.ClassLib.Service
     public interface IAdminService
     {
         public IEnumerable<User> GetSuspiciousUsers();
+        public void BanUser(Guid userId);
     }
 }

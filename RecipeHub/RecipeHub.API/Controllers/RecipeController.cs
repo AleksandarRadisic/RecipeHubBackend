@@ -2,7 +2,9 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using RecipeHub.API.Controllers.Base;
+using RecipeHub.API.Dto.Get;
 using RecipeHub.API.Dto.PostPut;
 using RecipeHub.ClassLib.Database.Infrastructure;
 using RecipeHub.ClassLib.Exceptions;
@@ -30,7 +32,41 @@ namespace RecipeHub.API.Controllers
         [HttpGet("{id:guid}")]
         public IActionResult GetById(Guid id)
         {
-            return Ok(_recipeService.GetRecipe(id));
+            var recipe = _recipeService.GetRecipe(id);
+            return Ok(new RecipeGetDto
+            {
+                Recipe = recipe,
+                Pictures = _recipeService.GetPicturesAsBase64(recipe)
+            });
+        }
+
+        [HttpGet("from-user/{id:guid}")]
+        public IActionResult GetFromUser(Guid id)
+        {
+            try
+            {
+                var recipes = _recipeService.GetRecipesByUserId(id);
+                return Ok(recipes);
+            }
+            catch (Exception ex)
+            {
+                return ReturnErrorResult(ex);
+            }
+        }
+
+        [HttpGet("logged-user")]
+        [Authorize]
+        public IActionResult GetFromLoggedInUser()
+        {
+            try
+            {
+                var recipes = _recipeService.GetRecipesByUserId(GetUserIdFromContext());
+                return Ok(recipes);
+            }
+            catch (Exception ex)
+            {
+                return ReturnErrorResult(ex);
+            }
         }
 
         [HttpPost]

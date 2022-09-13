@@ -93,6 +93,7 @@ namespace RecipeHub.ClassLib.Service.Implementation
             }
 
             article.Comments = new List<Comment>(article.Comments.Append(comment));
+            article.CalculateRating();
             _uow.GetRepository<IArticleWriteRepository>().Update(article);
         }
 
@@ -127,6 +128,11 @@ namespace RecipeHub.ClassLib.Service.Implementation
                 PictureUtility.deletePicture(ArticlePictureDestination, picture.FileName);
             }
             _uow.GetRepository<IArticleWriteRepository>().Delete(article);
+        }
+
+        public IEnumerable<Article> GetArticlesByUserId(Guid userId)
+        {
+            return _uow.GetRepository<IArticleReadRepository>().GetByUserId(userId);
         }
     }
 }

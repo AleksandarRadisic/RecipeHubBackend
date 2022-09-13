@@ -93,9 +93,18 @@ namespace RecipeHub.ClassLib.Service.Implementation
             throw new EntityNotFoundException("Picture not found in recipe");
         }
 
-        public string GetPictureAsBase64()
+        public IEnumerable<PictureBase64> GetPicturesAsBase64(Recipe recipe)
         {
-            return PictureUtility.convertToBase64(RecipePictureDestination, "21f9d746-8d61-4d79-9cc7-d040c2cd3b4e.jpg");
+            List<PictureBase64> pictures = new List<PictureBase64>();
+            foreach (var pic in recipe.Pictures)
+            {
+                pictures.Add(new PictureBase64
+                {
+                    Id = pic.Id,
+                    Data = PictureUtility.convertToBase64(RecipePictureDestination, pic.FileName)
+                });
+            }
+            return pictures;
         }
 
         public void AddComments(Comment comment, Guid recipeId)
@@ -110,6 +119,7 @@ namespace RecipeHub.ClassLib.Service.Implementation
             }
 
             recipe.Comments = new List<Comment>(recipe.Comments.Append(comment));
+            recipe.CalculateRating();
             _uow.GetRepository<IRecipeWriteRepository>().Update(recipe);
         }
 

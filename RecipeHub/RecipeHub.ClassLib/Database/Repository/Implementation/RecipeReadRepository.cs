@@ -40,6 +40,8 @@ namespace RecipeHub.ClassLib.Database.Repository.Implementation
                     .Include(r => r.Comments)
                     .Include(r => r.User)
                     .Include(r => r.Pictures)
+                    .Include(recipe => recipe.RecipeIngredients)
+                    .ThenInclude(recIng => recIng.Ingredient)
                     .FirstOrDefault(r => r.Id == id);
             }
 
@@ -56,10 +58,11 @@ namespace RecipeHub.ClassLib.Database.Repository.Implementation
                     .ThenInclude(recIng => recIng.Ingredient)
                     .Include(rec => rec.Comments.Where(c => c.Report == null || !c.Report.BlockApproved))
                     .Include(r => r.Pictures)
+                    .Include(r => r.User)
                     .Where(r => r.UserId == userId)
                     .ToList();
             }
-            return set.ToList();
+            return set.Where(r => r.UserId == userId).ToList();
         }
 
         public override Recipe GetById(Guid id, FetchType fetchType = FetchType.Lazy)
@@ -72,6 +75,7 @@ namespace RecipeHub.ClassLib.Database.Repository.Implementation
                     .ThenInclude(recIng => recIng.Ingredient)
                     .Include(rec => rec.Comments.Where(c => c.Report == null || !c.Report.BlockApproved))
                     .Include(r => r.Pictures)
+                    .Include(r => r.User)
                     .FirstOrDefault(r => r.Id == id);
             }
             return set.Find(id);
