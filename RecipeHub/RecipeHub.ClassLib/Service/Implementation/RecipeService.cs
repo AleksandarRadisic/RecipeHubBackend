@@ -96,6 +96,7 @@ namespace RecipeHub.ClassLib.Service.Implementation
         public IEnumerable<PictureBase64> GetPicturesAsBase64(Recipe recipe)
         {
             List<PictureBase64> pictures = new List<PictureBase64>();
+            if (recipe.Pictures == null) return pictures;
             foreach (var pic in recipe.Pictures)
             {
                 pictures.Add(new PictureBase64

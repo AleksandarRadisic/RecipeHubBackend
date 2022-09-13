@@ -76,9 +76,19 @@ namespace RecipeHub.ClassLib.Service.Implementation
             throw new EntityNotFoundException("Picture not found in recipe");
         }
 
-        public string GetPictureAsBase64()
+        public IEnumerable<PictureBase64> GetPictureAsBase64(Article article)
         {
-            throw new NotImplementedException();
+            List<PictureBase64> pictures = new List<PictureBase64>();
+            if (article.Pictures == null) return pictures;
+            foreach (var pic in article.Pictures)
+            {
+                pictures.Add(new PictureBase64
+                {
+                    Id = pic.Id,
+                    Data = PictureUtility.convertToBase64(ArticlePictureDestination, pic.FileName)
+                });
+            }
+            return pictures;
         }
 
         public void AddComments(Comment comment, Guid articleId)

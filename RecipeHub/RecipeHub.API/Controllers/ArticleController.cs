@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipeHub.API.Controllers.Base;
+using RecipeHub.API.Dto.Get;
 using RecipeHub.API.Dto.PostPut;
 using RecipeHub.ClassLib.Database.Infrastructure;
 using RecipeHub.ClassLib.Model;
@@ -30,7 +31,12 @@ namespace RecipeHub.API.Controllers
         {
             try
             {
-                return Ok(_articleService.GetArticle(id));
+                var article = _articleService.GetArticle(id);
+                return Ok(new ArticleGetDto
+                {
+                    Article = article,
+                    Pictures = _articleService.GetPictureAsBase64(article)
+                });
             }
             catch (Exception ex)
             {

@@ -16,7 +16,7 @@ namespace RecipeHub.ClassLib.Service
         public void EditArticle(Article article);
         public void AddPicture(IFormFile file, Guid id, Guid userId);
         public void DeletePicture(Guid articleId, Guid userId, Guid pictureId);
-        public string GetPictureAsBase64();
+        public IEnumerable<PictureBase64> GetPictureAsBase64(Article article);
         public void AddComments(Comment comment, Guid articleId);
         public void ReportComment(Guid articleId, Guid userId, Guid commentId);
         public void DeleteArticle(Guid articleId, Guid userId);
