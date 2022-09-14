@@ -54,18 +54,37 @@ namespace RecipeHub.API.Controllers
             }
         }
 
-        [HttpGet]
-        [Authorize(Roles = "Regular")]
-        public IActionResult AuthorizationTest()
+        [HttpPut("password")]
+        [Authorize]
+        public IActionResult ChangePassword(PasswordChangeDto dto)
         {
-            foreach (var claim in HttpContext.User.Claims)
+            try
             {
-                if (claim.Type == ClaimTypes.GivenName)
-                {
-                    return Ok(claim.Value);
-                }
+                _authenticationService.ChangePassword(GetUserIdFromContext(), dto.Password);
+                return Ok("Password changed");
             }
-            return Ok(HttpContext.Request.Headers.Authorization);
+            catch (Exception ex)
+            {
+                return ReturnErrorResult(ex);
+            }
+            
+        }
+
+        [HttpPut("UserInfo")]
+        public IActionResult UpdateUserInfo(PersonalInfoUpdateDto dto)
+        {
+            try
+            {
+                var user = _mapper.Map<User>(dto);
+                user.Id = GetUserIdFromContext();
+                _authenticationService.UpdateUser(user);
+                return Ok("Profile updated");
+            }
+            catch (Exception ex)
+            {
+                return ReturnErrorResult(ex);
+            }
+
         }
     }
 }

@@ -7,6 +7,7 @@ namespace RecipeHub.API.Dto.PostPut
         [Required(ErrorMessage = "Username is required")]
         public string UserName { get; set; }
         [Required(ErrorMessage = "Password is required")]
+        [MinLength(5, ErrorMessage = "Password must have at least 5 characters")]
         public string Password { get; set; }
         [Required(ErrorMessage = "Fist name is required")]
         public string FirstName { get; set; }

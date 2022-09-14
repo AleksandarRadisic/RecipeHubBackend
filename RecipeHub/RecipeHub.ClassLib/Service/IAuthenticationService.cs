@@ -11,5 +11,7 @@ namespace RecipeHub.ClassLib.Service
     {
         public void Register(User user);
         public string[] LogIn(string username, string password);
+        public void UpdateUser(User user);
+        public void ChangePassword(Guid id, string password);
     }
 }

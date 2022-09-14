@@ -8,6 +8,10 @@ namespace RecipeHub.API.AutoMapperProfiles
         public UserProfile()
         {
             CreateMap<NewUserDto, User>();
+            CreateMap<PersonalInfoUpdateDto, User>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<User, User>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }
     }
 }

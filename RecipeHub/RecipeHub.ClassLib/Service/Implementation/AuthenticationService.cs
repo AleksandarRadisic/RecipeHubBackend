@@ -30,6 +30,25 @@ namespace RecipeHub.ClassLib.Service.Implementation
             return new [] { _jwtGenerator.GenerateToken(user), user.Role.Name, user.Id.ToString() };
         }
 
+        public void UpdateUser(User user)
+        {
+            var userFromDb = _uow.GetRepository<IUserReadRepository>().GetById(user.Id);
+            if (userFromDb == null) throw new EntityNotFoundException("User not found");
+            if (_uow.GetRepository<IUserReadRepository>().GetByUsername(user.UserName) != null &&
+                _uow.GetRepository<IUserReadRepository>().GetByUsername(user.UserName).Id != user.Id)
+                throw new RegistrationException("Username already taken");
+            _mapper.Map(user, userFromDb);
+            _uow.GetRepository<IUserWriteRepository>().Update(userFromDb);
+        }
+
+        public void ChangePassword(Guid id, string password)
+        {
+            var userFromDb = _uow.GetRepository<IUserReadRepository>().GetById(id);
+            if (userFromDb == null) throw new EntityNotFoundException("User not found");
+            userFromDb.Password = PasswordEncoder.EncodePassword(password);
+            _uow.GetRepository<IUserWriteRepository>().Update(userFromDb);
+        }
+
         public void Register(User user)
         {
             if (_uow.GetRepository<IUserReadRepository>().GetByUsername(user.UserName) != null)
