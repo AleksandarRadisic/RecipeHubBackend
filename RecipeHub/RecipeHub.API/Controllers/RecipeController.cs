@@ -26,18 +26,25 @@ namespace RecipeHub.API.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            return Ok(_recipeService.GetRecipes());
+            return Ok(_recipeService.GetRecipes().OrderByDescending(r => r.Rating));
         }
 
         [HttpGet("{id:guid}")]
         public IActionResult GetById(Guid id)
         {
-            var recipe = _recipeService.GetRecipe(id);
-            return Ok(new RecipeGetDto
+            try
             {
-                Recipe = recipe,
-                Pictures = _recipeService.GetPicturesAsBase64(recipe)
-            });
+                var recipe = _recipeService.GetRecipe(id);
+                return Ok(new RecipeGetDto
+                {
+                    Recipe = recipe,
+                    Pictures = _recipeService.GetPicturesAsBase64(recipe)
+                });
+            }
+            catch (Exception ex)
+            {
+                return ReturnErrorResult(ex);
+            }
         }
 
         [HttpGet("from-user/{id:guid}")]
