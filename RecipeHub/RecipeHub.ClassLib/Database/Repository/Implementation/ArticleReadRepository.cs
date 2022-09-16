@@ -37,6 +37,7 @@ namespace RecipeHub.ClassLib.Database.Repository.Implementation
             {
                 return GetSet()
                     .Include(a => a.Comments)
+                    .ThenInclude(c => c.User)
                     .Include(a => a.User)
                     .Include(a => a.Pictures)
                     .FirstOrDefault(a => a.Id == id);
@@ -51,6 +52,7 @@ namespace RecipeHub.ClassLib.Database.Repository.Implementation
             {
                 return GetSet()
                     .Include(a => a.Comments)
+                    .ThenInclude(c => c.User)
                     .Include(a => a.User)
                     .Include(a => a.Pictures)
                     .Where(a => a.UserId == userId)
@@ -66,6 +68,7 @@ namespace RecipeHub.ClassLib.Database.Repository.Implementation
             {
                 return GetSet()
                     .Include(a => a.Comments.Where(c => c.Report == null || !c.Report.BlockApproved))
+                    .ThenInclude(c => c.User)
                     .Include(a => a.User)
                     .Include(a => a.Pictures)
                     .FirstOrDefault(a => a.Id == id);

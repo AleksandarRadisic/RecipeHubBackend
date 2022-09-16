@@ -43,7 +43,7 @@ namespace RecipeHub.ClassLib.Database.Repository.Implementation
 
         public User GetByEmail(string email)
         {
-            return GetSet().FirstOrDefault(user => user.UserName.Equals(email));
+            return GetSet().FirstOrDefault(user => user.Email.Equals(email));
         }
 
         public IEnumerable<User> GetSuspiciousUsers(int numberOfBlockedComments = 3)

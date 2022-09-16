@@ -26,6 +26,7 @@ namespace RecipeHub.ClassLib.Database.Repository.Implementation
                     .Include(recipe => recipe.RecipeIngredients)
                     .ThenInclude(recIng => recIng.Ingredient)
                     .Include(rec => rec.Comments.Where(c => c.Report == null || !c.Report.BlockApproved))
+                    .ThenInclude(c => c.User)
                     .Include(r => r.Pictures)
                     .ToList();
             }
@@ -38,6 +39,7 @@ namespace RecipeHub.ClassLib.Database.Repository.Implementation
             {
                 return GetSet()
                     .Include(r => r.Comments)
+                    .ThenInclude(c => c.User)
                     .Include(r => r.User)
                     .Include(r => r.Pictures)
                     .Include(recipe => recipe.RecipeIngredients)
@@ -57,6 +59,7 @@ namespace RecipeHub.ClassLib.Database.Repository.Implementation
                     .Include(recipe => recipe.RecipeIngredients)
                     .ThenInclude(recIng => recIng.Ingredient)
                     .Include(rec => rec.Comments.Where(c => c.Report == null || !c.Report.BlockApproved))
+                    .ThenInclude(c => c.User)
                     .Include(r => r.Pictures)
                     .Include(r => r.User)
                     .Where(r => r.UserId == userId)
@@ -74,6 +77,7 @@ namespace RecipeHub.ClassLib.Database.Repository.Implementation
                     .Include(recipe => recipe.RecipeIngredients)
                     .ThenInclude(recIng => recIng.Ingredient)
                     .Include(rec => rec.Comments.Where(c => c.Report == null || !c.Report.BlockApproved))
+                    .ThenInclude(c => c.User)
                     .Include(r => r.Pictures)
                     .Include(r => r.User)
                     .FirstOrDefault(r => r.Id == id);
