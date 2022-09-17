@@ -11,6 +11,7 @@ namespace RecipeHub.API.AutoMapperProfiles
             CreateMap<PersonalInfoUpdateDto, User>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             CreateMap<User, User>()
+                .ForMember(u => u.RoleId, opts => opts.Ignore())
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }
     }

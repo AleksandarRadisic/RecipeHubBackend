@@ -49,7 +49,7 @@ namespace RecipeHub.API.Controllers
         {
             try
             {
-                return Ok(_adminService.GetSuspiciousUsers());
+                return Ok(_adminService.GetSuspiciousUsers().OrderByDescending(u => u.Comments.Count()));
             }
             catch (Exception ex)
             {

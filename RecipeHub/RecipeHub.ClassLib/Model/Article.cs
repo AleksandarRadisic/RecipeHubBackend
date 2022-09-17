@@ -36,7 +36,7 @@ namespace RecipeHub.ClassLib.Model
             }
 
             if (commentCount == 0) Rating = 0;
-            Rating = rating / commentCount;
+            else Rating = rating / commentCount;
         }
     }
 }

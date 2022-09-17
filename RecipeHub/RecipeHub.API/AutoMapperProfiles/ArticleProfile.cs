@@ -10,6 +10,8 @@ namespace RecipeHub.API.AutoMapperProfiles
         {
             CreateMap<NewArticleDto, Article>();
             CreateMap<Article, Article>()
+                .ForMember(x => x.Pictures, opts => opts.Ignore())
+                .ForMember(x => x.Comments, opts => opts.Ignore())
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }
     }

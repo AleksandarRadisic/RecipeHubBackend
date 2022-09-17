@@ -23,7 +23,7 @@ namespace RecipeHub.API.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            return Ok(_articleService.GetArticles());
+            return Ok(_articleService.GetArticles().OrderByDescending(a => a.Rating));
         }
 
         [HttpGet("{id:guid}")]
@@ -49,8 +49,8 @@ namespace RecipeHub.API.Controllers
         {
             try
             {
-                var recipes = _articleService.GetArticlesByUserId(id);
-                return Ok(recipes);
+                var articles = _articleService.GetArticlesByUserId(id);
+                return Ok(articles.OrderByDescending(a => a.Rating));
             }
             catch (Exception ex)
             {
@@ -64,8 +64,8 @@ namespace RecipeHub.API.Controllers
         {
             try
             {
-                var recipes = _articleService.GetArticlesByUserId(GetUserIdFromContext());
-                return Ok(recipes);
+                var articles = _articleService.GetArticlesByUserId(GetUserIdFromContext());
+                return Ok(articles.OrderByDescending(a => a.Rating));
             }
             catch (Exception ex)
             {
@@ -159,7 +159,7 @@ namespace RecipeHub.API.Controllers
 
         }
 
-        [HttpPost("{id:guid}/comments{comId:guid}/report")]
+        [HttpPost("{id:guid}/comments/{comId:guid}/report")]
         [Authorize(Roles = "Regular")]
         public IActionResult ReportComments(Guid id, Guid comId)
         {

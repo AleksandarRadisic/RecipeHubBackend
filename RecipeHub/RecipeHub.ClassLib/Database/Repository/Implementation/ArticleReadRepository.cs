@@ -59,7 +59,7 @@ namespace RecipeHub.ClassLib.Database.Repository.Implementation
                     .ToList();
             }
 
-            return GetSet().ToList();
+            return GetSet().Where(a => a.UserId == userId).ToList();
         }
 
         public override Article GetById(Guid id, FetchType fetchType = FetchType.Lazy)

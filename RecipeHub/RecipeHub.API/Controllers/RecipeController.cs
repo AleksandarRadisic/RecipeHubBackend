@@ -53,7 +53,7 @@ namespace RecipeHub.API.Controllers
             try
             {
                 var recipes = _recipeService.GetRecipesByUserId(id);
-                return Ok(recipes);
+                return Ok(recipes.OrderByDescending(r => r.Rating));
             }
             catch (Exception ex)
             {
@@ -68,7 +68,7 @@ namespace RecipeHub.API.Controllers
             try
             {
                 var recipes = _recipeService.GetRecipesByUserId(GetUserIdFromContext());
-                return Ok(recipes);
+                return Ok(recipes.OrderByDescending(r => r.Rating));
             }
             catch (Exception ex)
             {
@@ -163,7 +163,7 @@ namespace RecipeHub.API.Controllers
             
         }
 
-        [HttpPost("{id:guid}/comments{comId:guid}/report")]
+        [HttpPost("{id:guid}/comments/{comId:guid}/report")]
         [Authorize(Roles = "Regular")]
         public IActionResult ReportComments(Guid id, Guid comId)
         {

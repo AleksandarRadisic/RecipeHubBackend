@@ -47,7 +47,7 @@ namespace RecipeHub.ClassLib.Service.Implementation
 
         public void EditRecipe(Recipe recipe)
         {
-            Recipe recipeFromDatabase = _uow.GetRepository<IRecipeReadRepository>().GetById(recipe.Id, FetchType.Eager);
+            Recipe recipeFromDatabase = _uow.GetRepository<IRecipeReadRepository>().GetById(recipe.Id, false, FetchType.Eager);
             if (recipeFromDatabase == null) throw new EntityNotFoundException("Recipe not found");
             if (recipeFromDatabase.UserId != recipe.UserId) throw new UnauthorizedAccessException("Recipe not owned by logged user");
             List<Guid> IngredientIds = new List<Guid>();
@@ -67,17 +67,17 @@ namespace RecipeHub.ClassLib.Service.Implementation
 
         public void AddPicture(IFormFile file, Guid id, Guid userId)
         {
-            Recipe recipe = _uow.GetRepository<IRecipeReadRepository>().GetById(id);
+            Recipe recipe = _uow.GetRepository<IRecipeReadRepository>().GetById(id, false, FetchType.Eager);
             if (recipe == null) throw new EntityNotFoundException("Recipe not found");
             if (recipe.UserId != userId) throw new UnauthorizedAccessException("Recipe not owned");
             string pictureName = PictureUtility.savePicture(RecipePictureDestination, file);
-            recipe.Pictures = new List<Picture> {new Picture{FileName = pictureName}};
+            recipe.Pictures = new List<Picture>(recipe.Pictures.Append(new Picture { FileName = pictureName }));
             _uow.GetRepository<IRecipeWriteRepository>().Update(recipe);
         }
 
         public void DeletePicture(Guid recipeId, Guid userId, Guid pictureId)
         {
-            Recipe recipe = _uow.GetRepository<IRecipeReadRepository>().GetById(recipeId, FetchType.Eager);
+            Recipe recipe = _uow.GetRepository<IRecipeReadRepository>().GetById(recipeId, false, FetchType.Eager);
             if (recipe == null) throw new EntityNotFoundException("Recipe not found");
             if (recipe.UserId != userId) throw new UnauthorizedAccessException("Recipe not owned");
             foreach (var pic in recipe.Pictures)
@@ -110,7 +110,7 @@ namespace RecipeHub.ClassLib.Service.Implementation
 
         public void AddComments(Comment comment, Guid recipeId)
         {
-            Recipe recipe = _uow.GetRepository<IRecipeReadRepository>().GetById(recipeId, FetchType.Eager);
+            Recipe recipe = _uow.GetRepository<IRecipeReadRepository>().GetById(recipeId, false, FetchType.Eager);
             if (recipe == null) throw new EntityNotFoundException("Recipe not found");
             if (recipe.UserId == comment.UserId) throw new ForbiddenException("Cannot post comment on owned recipe");
             foreach (var existingComment in recipe.Comments)
@@ -126,7 +126,7 @@ namespace RecipeHub.ClassLib.Service.Implementation
 
         public void ReportComment(Guid recipeId, Guid userId, Guid commentId)
         {
-            Recipe recipe = _uow.GetRepository<IRecipeReadRepository>().GetById(recipeId, FetchType.Eager);
+            Recipe recipe = _uow.GetRepository<IRecipeReadRepository>().GetById(recipeId, false, FetchType.Eager);
             if (recipe == null) throw new EntityNotFoundException("Recipe not found");
             if (recipe.UserId != userId) throw new ForbiddenException("Cannot report comments on unowned recipe");
             foreach (var existingComment in recipe.Comments)

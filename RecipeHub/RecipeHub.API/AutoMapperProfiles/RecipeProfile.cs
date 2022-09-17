@@ -11,6 +11,8 @@ namespace RecipeHub.API.AutoMapperProfiles
             CreateMap<NewRecipeDto, Recipe>();
             CreateMap<RecipeIngredientDto, RecipeIngredient>();
             CreateMap<Recipe, Recipe>()
+                .ForMember(x => x.Pictures, opts => opts.Ignore())
+                .ForMember(x => x.Comments, opts => opts.Ignore())
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         }
     }

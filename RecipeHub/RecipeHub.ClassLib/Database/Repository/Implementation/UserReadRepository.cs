@@ -50,7 +50,7 @@ namespace RecipeHub.ClassLib.Database.Repository.Implementation
         {
             return GetSet()
                 .Include(u => u.Comments.Where(c => c.Report != null && c.Report.BlockApproved))
-                .Where(u => numberOfBlockedComments <= u.Comments.Count(c => c.Report != null && c.Report.BlockApproved));
+                .Where(u => numberOfBlockedComments <= u.Comments.Count(c => c.Report != null && c.Report.BlockApproved) && !u.Banned);
         }
     }
 }

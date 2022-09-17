@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using RecipeHub.API.Controllers.Base;
 using RecipeHub.API.Dto.PostPut;
 using RecipeHub.ClassLib.Database.Infrastructure;
+using RecipeHub.ClassLib.Database.Repository;
 using RecipeHub.ClassLib.Exceptions;
 using RecipeHub.ClassLib.Model;
 using RecipeHub.ClassLib.Service;
@@ -35,6 +36,21 @@ namespace RecipeHub.API.Controllers
             {
                 return ReturnErrorResult(ex);
             }
+        }
+
+        [HttpGet ("logged")]
+        [Authorize]
+        public IActionResult GetLoggedUser()
+        {
+            try
+            {
+                return Ok(_uow.GetRepository<IUserReadRepository>().GetById(GetUserIdFromContext()));
+            }
+            catch (Exception ex)
+            {
+                return ReturnErrorResult(ex);
+            }
+            
         }
 
         [HttpPost("login")]

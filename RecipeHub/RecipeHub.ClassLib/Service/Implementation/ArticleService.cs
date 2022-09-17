@@ -42,7 +42,7 @@ namespace RecipeHub.ClassLib.Service.Implementation
         {
             Article articleFromDatabase = _uow.GetRepository<IArticleReadRepository>().GetById(article.Id);
             if (articleFromDatabase == null) throw new EntityNotFoundException("Article not found");
-            if (articleFromDatabase.UserId == article.UserId)
+            if (articleFromDatabase.UserId != article.UserId)
                 throw new UnauthorizedAccessException("Article not owned by logged user");
             _mapper.Map(article, articleFromDatabase);
             _uow.GetRepository<IArticleWriteRepository>().Update(articleFromDatabase);
@@ -50,17 +50,17 @@ namespace RecipeHub.ClassLib.Service.Implementation
 
         public void AddPicture(IFormFile file, Guid id, Guid userId)
         {
-            Article article = _uow.GetRepository<IArticleReadRepository>().GetById(id);
+            Article article = _uow.GetRepository<IArticleReadRepository>().GetById(id, false, FetchType.Eager);
             if (article == null) throw new EntityNotFoundException("Article not found");
             if (article.UserId != userId) throw new UnauthorizedAccessException("Article not owned");
             string pictureName = PictureUtility.savePicture(ArticlePictureDestination, file);
-            article.Pictures = new List<Picture> { new Picture { FileName = pictureName } };
+            article.Pictures = new List<Picture> (article.Pictures.Append(new Picture { FileName = pictureName }));
             _uow.GetRepository<IArticleWriteRepository>().Update(article);
         }
 
         public void DeletePicture(Guid articleId, Guid userId, Guid pictureId)
         {
-            Article article = _uow.GetRepository<IArticleReadRepository>().GetById(articleId, FetchType.Eager);
+            Article article = _uow.GetRepository<IArticleReadRepository>().GetById(articleId, false, FetchType.Eager);
             if (article == null) throw new EntityNotFoundException("Article not found");
             if (article.UserId != userId) throw new UnauthorizedAccessException("Article not owned");
             foreach (var pic in article.Pictures)
@@ -93,7 +93,7 @@ namespace RecipeHub.ClassLib.Service.Implementation
 
         public void AddComments(Comment comment, Guid articleId)
         {
-            Article article = _uow.GetRepository<IArticleReadRepository>().GetById(articleId, FetchType.Eager);
+            Article article = _uow.GetRepository<IArticleReadRepository>().GetById(articleId, false, FetchType.Eager);
             if (article == null) throw new EntityNotFoundException("Article not found");
             if (article.UserId == comment.UserId) throw new ForbiddenException("Cannot post comment on owned article");
             foreach (var existingComment in article.Comments)
@@ -109,7 +109,7 @@ namespace RecipeHub.ClassLib.Service.Implementation
 
         public void ReportComment(Guid articleId, Guid userId, Guid commentId)
         {
-            Article article = _uow.GetRepository<IArticleReadRepository>().GetById(articleId, FetchType.Eager);
+            Article article = _uow.GetRepository<IArticleReadRepository>().GetById(articleId, false, FetchType.Eager);
             if (article == null) throw new EntityNotFoundException("Article not found");
             if (article.UserId != userId) throw new ForbiddenException("Cannot report comments on unowned article");
             foreach (var existingComment in article.Comments)
