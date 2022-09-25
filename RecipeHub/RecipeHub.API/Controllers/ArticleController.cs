@@ -75,7 +75,7 @@ namespace RecipeHub.API.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Regular")]
-        public IActionResult PostAction(NewArticleDto dto)
+        public IActionResult PostArticle(NewArticleDto dto)
         {
             try
             {

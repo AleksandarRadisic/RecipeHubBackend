@@ -1,9 +1,10 @@
-﻿using RecipeHub.API.Dto.PostPut;
+﻿using AutoMapper;
+using RecipeHub.API.Dto.PostPut;
 using RecipeHub.ClassLib.Model;
 
 namespace RecipeHub.API.AutoMapperProfiles
 {
-    public class UserProfile : RecipeProfile
+    public class UserProfile : Profile
     {
         public UserProfile()
         {
